@@ -21,6 +21,7 @@
 #include "debug.h"
 #include "util.h"
 #include <string.h>
+#include "action_util.h"
 
 #ifdef RING_BUFFERED_6KRO_REPORT_ENABLE
 #    define RO_ADD(a, b) ((a + b) % KEYBOARD_REPORT_KEYS)
@@ -242,13 +243,35 @@ void del_key_bit(report_nkro_t* nkro_report, uint8_t code) {
  * FIXME: Needs doc
  */
 void add_key_to_report(uint8_t key) {
-#ifdef NKRO_ENABLE
+    uint8_t index = 0;
+    for (index = 0; index < KEYBOARD_REPORT_KEYS; index++) {
+       if (keyboard_report->keys[index] == 0x00) {
+           keyboard_report->keys[index] = key;
+           keymap_config.User_Send_Type = false;
+           return;
+       }
+    }
+
     if (keyboard_protocol && keymap_config.nkro) {
-        add_key_bit(nkro_report, key);
+        if ((key >> 3) < NKRO_REPORT_BITS) {
+            nkro_report->bits[key >> 3] |= 1 << (key & 7);
+            keymap_config.User_Send_Type = true;
+        }
+    }
+}
+
+void General_Key_Reorder(uint8_t Spot_Index) {
+    if (Spot_Index >= (KEYBOARD_REPORT_KEYS - 1)) {
         return;
     }
-#endif
-    add_key_byte(keyboard_report, key);
+
+    for(uint8_t i = Spot_Index; i < (KEYBOARD_REPORT_KEYS - 1); i++) {
+        if (keyboard_report->keys[i + 1] != 0x00) {
+            keyboard_report->keys[i] = keyboard_report->keys[i + 1];
+            keyboard_report->keys[i + 1] = 0x00;
+        }
+    }
+    return;
 }
 
 /** \brief del key from report
@@ -256,13 +279,23 @@ void add_key_to_report(uint8_t key) {
  * FIXME: Needs doc
  */
 void del_key_from_report(uint8_t key) {
-#ifdef NKRO_ENABLE
-    if (keyboard_protocol && keymap_config.nkro) {
-        del_key_bit(nkro_report, key);
+    uint8_t index = 0;
+
+    for(index = 0; index < KEYBOARD_REPORT_KEYS; index++) {
+        if(key == keyboard_report->keys[index]) {
+            keyboard_report->keys[index] = 0x00;
+            General_Key_Reorder(index);
+            keymap_config.User_Send_Type = false;
         return;
     }
-#endif
-    del_key_byte(keyboard_report, key);
+    }
+
+    if (keyboard_protocol && keymap_config.nkro) {
+        if ((key >> 3) < NKRO_REPORT_BITS) {
+            nkro_report->bits[key >> 3] &= ~(1 << (key & 7));
+            keymap_config.User_Send_Type = true;
+        }
+    }
 }
 
 /** \brief clear key from report

@@ -266,6 +266,6 @@ TEST_F(DebounceTest, AsyncTickOneKeyShort1) {
     /*
      * Debounce implementations should never read the timer more than once per invocation
      */
-    async_time_jumps_ = DEBOUNCE;
+    async_time_jumps_ = Debounce_Delay;
     runEvents();
 }

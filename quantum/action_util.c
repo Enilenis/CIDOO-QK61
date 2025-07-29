@@ -324,20 +324,19 @@ void send_nkro_report(void) {
  * FIXME: needs doc
  */
 void send_keyboard_report(void) {  
-#ifdef NKRO_ENABLE
-    if (keyboard_protocol && keymap_config.nkro) {
-        send_nkro_report();
+    if (keymap_config.User_Send_Type && keyboard_protocol && keymap_config.nkro) {
+        User_send_nkro_report();
     } else {
-        send_6kro_report();
+        User_send_6kro_report();
     }
-#else
-    
-        #ifdef ES_INCLUDE_INFO_CONFIG_FILE
-        /*es_bp_set*/
-        #endif
-        
-    send_6kro_report();
-#endif
+//#else
+//    
+//        #ifdef ES_INCLUDE_INFO_CONFIG_FILE
+//        /*es_bp_set*/
+//        #endif
+//        
+//    send_6kro_report();
+//#endif
 }
 
 /** \brief Get mods
@@ -353,6 +352,7 @@ uint8_t get_mods(void) {
  */
 void add_mods(uint8_t mods) {
     real_mods |= mods;
+    keymap_config.User_Send_Type = false;
 }
 /** \brief del mods
  *
@@ -360,6 +360,7 @@ void add_mods(uint8_t mods) {
  */
 void del_mods(uint8_t mods) {
     real_mods &= ~mods;
+    keymap_config.User_Send_Type = false;
 }
 /** \brief set mods
  *
@@ -572,50 +573,30 @@ void neutralize_flashing_modifiers(uint8_t active_mods) {
 #endif
 //-------------------------------------------------------------------------
 void User_send_6kro_report(void) {
-    nkro_report->mods = (real_mods | weak_mods);
+    keyboard_report->mods = (real_mods | weak_mods);
+    nkro_report->mods = 0X00;
     host_keyboard_send(keyboard_report);
 }
 
 void User_send_nkro_report(void) {
-    nkro_report->mods = (real_mods | weak_mods);
+    nkro_report->mods = 0X00;
     host_nkro_send(nkro_report);
 }
 
 void User_Clear_Board(void) {
     clear_mods();
     clear_weak_mods();
-    if (keymap_config.nkro) {
-        memset(nkro_report->bits, 0, sizeof(nkro_report->bits));
-        User_send_nkro_report();
-    } else {
         memset(keyboard_report->keys, 0, sizeof(keyboard_report->keys));
         User_send_6kro_report();
-    }
+    memset(nkro_report->bits, 0, sizeof(nkro_report->bits));
+    User_send_nkro_report();
 }
 
 void User_Send_Key(uint8_t Code, bool Status) {
-    if (keymap_config.nkro) {
-        if (Status) {
-            if (IS_BASIC_KEYCODE(Code)) {
-                nkro_report->bits[Code >> 3] |= 1 << (Code & 7);
-            } else if(IS_MODIFIER_KEYCODE(Code)) {
-                add_mods(MOD_BIT(Code));
-            }
-        } else {
-            if (IS_BASIC_KEYCODE(Code)) {
-                nkro_report->bits[Code >> 3] &= ~(1 << (Code & 7));
-            } else if(IS_MODIFIER_KEYCODE(Code)) {
-                del_mods(MOD_BIT(Code));
-            }
-        }
-        User_send_nkro_report();
+    if (Status) {
+        register_code(Code);
     } else {
-        if (Status) {
-            add_key_byte(keyboard_report, Code);
-        } else {
-            del_key_byte(keyboard_report, Code);
-        }
-        User_send_6kro_report();
+        unregister_code(Code);
     }
 }
 //-------------------------------------------------------------------------

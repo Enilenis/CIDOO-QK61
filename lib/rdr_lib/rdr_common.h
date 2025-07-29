@@ -1,19 +1,15 @@
 #pragma once
 
 #include "quantum.h"
-#include "raw_hid.h"
+#include "usb_descriptor.h"
 #include "usb_main.h"
+#include "raw_hid.h"
 
 /************************波动开关**************************/
 /************************波动开关**************************/
 /************************波动开关**************************/
 #define MODE_2P4G_IO        (B12)
 #define MODE_BLE_IO         (B13)
-
-uint8_t Key_Switch_Scan ;
-uint8_t Key_Switch_Check;
-uint8_t Key_Switch_Old  ;
-uint8_t Key_Switch_delay;
 /************************IO 口**************************/
 /************************IO 口**************************/
 /************************IO 口**************************/
@@ -68,10 +64,10 @@ uint8_t Key_Switch_delay;
 #define USER_SYSTEM_LENGTH		0X03
 #define USER_BATTERY_LENGTH		0X02
 
-#define KB_REPORT_ID            0x06                 // Extend keyboard report ID.
-#define SYS_REPORT_ID     	    0x03                 // Extend System   report ID.
-#define CON_REPORT_ID     	    0x04                 // Extend Consumer report ID.
-#define MOUSE_REPORT_ID  	    0x02                 // Extend mouse	report ID.
+#define KB_REPORT_ID            0x06          
+#define SYS_REPORT_ID     	    0x03          
+#define CON_REPORT_ID     	    0x04          
+#define MOUSE_REPORT_ID  	    0x02          
 
 #define LOGO_LED_ENABLE         (1)
 #define SIDE_LED_ENABLE         (0)
@@ -108,38 +104,40 @@ enum Custom_Ble_24G_Status_S {
 };
 
 typedef enum {
-    KB_MODE_CONNECT_OK,  	        //连接成功
-    KB_MODE_CONNECT_PAIR,	        //配对
-    KB_MODE_CONNECT_RETURN,	        //回连
+    KB_MODE_CONNECT_OK,  	       
+    KB_MODE_CONNECT_PAIR,	       
+    KB_MODE_CONNECT_RETURN,	       
 } keyboard_System_state_e;
 
 typedef enum {
-    USER_SLEEP_PASS,	            //休眠成功
-    USER_SLEEP_FIAL,	            //休眠失败
+    USER_SLEEP_PASS,	           
+    USER_SLEEP_FIAL,	           
 } keyboard_System_Sleep_Status_s;
 
-/************************默认工作模式**************************/
-/************************默认工作模式**************************/
-/************************默认工作模式**************************/
-#define INIT_WORK_MODE          (QMK_USB_MODE)       // 默认工作模式
-#define INIT_BLE_CHANNEL        (QMK_BLE_CHANNEL_1)  // 默认蓝牙通道
-#define INIT_BATT_NUMBER        (50)                 // 上电的默认电池电量
 
-#define INIT_SIX_KEY            (0)                  // 六键
-#define INIT_ALL_KEY            (1)                  // 全键
-#define INIT_ALL_SIX_KEY        (INIT_ALL_KEY)       // 全键
+#define INIT_WORK_MODE          (QMK_USB_MODE)
+#define INIT_BLE_CHANNEL        (QMK_BLE_CHANNEL_1)
+#define INIT_BATT_NUMBER        (50)
 
-#define INIT_WIN_MODE           (0)                  // Windows
-#define INIT_MAC_MODE           (1)                  // Mac
-#define INIT_WIN_MAC_MODE       (INIT_WIN_MODE)      // Windows
+#define INIT_SIX_KEY            (0)
+#define INIT_ALL_KEY            (1)
+#define INIT_ALL_SIX_KEY        (INIT_ALL_KEY)
 
-#define INIT_WIN_NLOCK          (0)                  // 不锁WIN
-#define INIT_WIN_LOCK           (1)                  // 锁WIN
-#define INIT_WIN_LOCK_NLOCK     (INIT_WIN_NLOCK)     // 不锁WIN
+#define INIT_WIN_MODE           (0)
+#define INIT_MAC_MODE           (1)
+#define INIT_WIN_MAC_MODE       (INIT_WIN_MODE)
 
-#define INIT_LED_ON             (0)                  // 开背光
-#define INIT_LED_OFF            (1)                  // 不开背光
-#define INIT_LED_ON_OFF         (INIT_LED_ON)        // 开背光
+#define INIT_WIN_NLOCK          (0)
+#define INIT_WIN_LOCK           (1)
+#define INIT_WIN_LOCK_NLOCK     (INIT_WIN_NLOCK)
+
+#define INIT_OFF_CHANGE         (0)
+#define INIT_ON_CHANGE          (1)
+#define INIT_ON_OFF_CHANGE      (INIT_OFF_CHANGE)
+
+#define INIT_LED_ON             (0)
+#define INIT_LED_OFF            (1)
+#define INIT_LED_ON_OFF         (INIT_LED_ON)
 
 #define USER_DEFINE_KEY         (QK_KB)
 enum Custom_Keycodes {
@@ -151,10 +149,9 @@ enum Custom_Keycodes {
     QMK_BATT_NUM,
     QMK_WIN_LOCK,
     QMK_KB_SIX_N_CH,
-    QMK_MAC_WIN_CH,
-    QMK_CAPS_TR_CTRL,
     RGB_RTOG,
     U_EE_CLR,
+    QMK_DEBOUNCE,
 #if LOGO_LED_ENABLE
     LOGO_TOG,
     LOGO_MOD,
@@ -187,22 +184,22 @@ enum Custom_Keycodes {
     QMK_KB_BLE3_PAIR
 };
 
-#define WIN_COL  (1)
-#define WIN_ROL  (3)
+#define WIN_COL                     (1)
+#define WIN_ROL                     (3)
 
-#define MAC_COL  (2)
-#define MAC_ROL  (3)
+#define MAC_COL                     (2)
+#define MAC_ROL                     (3)
 
-#define KC_K29   KC_BACKSLASH
-#define KC_K42   KC_NONUS_HASH
-#define KC_K45   KC_NONUS_BACKSLASH
-#define KC_K56   KC_INTERNATIONAL_1
-#define KC_K14   KC_INTERNATIONAL_3
-#define KC_K132  KC_INTERNATIONAL_4
-#define KC_K131  KC_INTERNATIONAL_5
-#define KC_K133  KC_INTERNATIONAL_2
-#define KC_K151  KC_LANGUAGE_1
-#define KC_K150  KC_LANGUAGE_2
+#define KC_K29 	KC_BACKSLASH
+#define KC_K42 	KC_NONUS_HASH
+#define KC_K45 	KC_NONUS_BACKSLASH
+#define KC_K56 	KC_INTERNATIONAL_1
+#define KC_K14  KC_INTERNATIONAL_3
+#define KC_K132	KC_INTERNATIONAL_4
+#define KC_K131	KC_INTERNATIONAL_5
+#define KC_K133	KC_INTERNATIONAL_2
+#define KC_K151	KC_LANGUAGE_1
+#define KC_K150	KC_LANGUAGE_2
 
 #define MD_24G	 QMK_KB_MODE_2P4G
 #define MD_BLE1	 QMK_KB_MODE_BLE1
@@ -212,49 +209,49 @@ enum Custom_Keycodes {
 #define QK_BAT   QMK_BATT_NUM
 #define QK_WLO	 QMK_WIN_LOCK
 #define SIX_N	 QMK_KB_SIX_N_CH
-#define MW_CH	 QMK_MAC_WIN_CH
-#define CAP_CTRL QMK_CAPS_TR_CTRL
+#define KEY_DEB	 QMK_DEBOUNCE
 
 /************************基本变量**************************/
 /************************基本变量**************************/
 /************************基本变量**************************/
 typedef struct {
-    uint8_t Key_Mode;               // 键盘工作模式
-    uint8_t Key_Old_Mode;           // 键盘上一次的工作模式
-    uint8_t Ble_Channel;            // 蓝牙通道
-    uint8_t Batt_Number;            // 电池电量
-    uint8_t Nkro;                   // 六键全键无冲
-    uint8_t Mac_Win_Mode;           // MAC系统WIN系统
-    uint8_t Win_Lock;               // 锁WIN
-    uint8_t Led_On_Off;             // 背光开关
+    uint8_t Key_Mode;              
+    uint8_t Ble_Channel;           
+    uint8_t Batt_Number;           
+    uint8_t Nkro;                  
+    uint8_t Mac_Win_Mode;          
+    uint8_t Win_Lock;              
+    uint8_t Led_On_Off;            
+    uint8_t Debounce_Delay;        
 #if LOGO_LED_ENABLE
-    uint8_t Logo_On_Off;            // LOGO灯光开关
-    uint8_t Logo_Mode;              // LOGO灯光模式
-    uint8_t Logo_Colour;            // LOGO灯光颜色
-    uint8_t Logo_Saturation;        // LOGO灯光饱和度
-    uint8_t Logo_Brightness;        // LOGO灯光亮度
-    uint8_t Logo_Speed;             // LOGO灯光速度
+    uint8_t Logo_On_Off;           
+    uint8_t Logo_Mode;             
+    uint8_t Logo_Colour;           
+    uint8_t Logo_Saturation;       
+    uint8_t Logo_Brightness;       
+    uint8_t Logo_Speed;            
 #endif
 #if SIDE_LED_ENABLE
-    uint8_t Side_On_Off;            // 测灯灯光开关
-    uint8_t Side_Mode;              // 测灯灯光模式
-    uint8_t Side_Colour;            // 测灯灯光颜色
-    uint8_t Side_Saturation;        // 测灯灯光饱和度
-    uint8_t Side_Brightness;        // 测灯灯光亮度
-    uint8_t Side_Speed;             // 测灯灯光速度
+    uint8_t Side_On_Off;           
+    uint8_t Side_Mode;             
+    uint8_t Side_Colour;           
+    uint8_t Side_Saturation;       
+    uint8_t Side_Brightness;       
+    uint8_t Side_Speed;            
 #endif
 } Keyboard_Info_t;
 
 extern Keyboard_Info_t Keyboard_Info;
 
 typedef struct {
-    uint8_t System_Work_Status;     // 系统状态
-    uint8_t System_Work_Mode;       // 工作模式
-    uint8_t System_Work_Channel;    // 工作通道
-    uint8_t System_Connect_Status;  // 连接状态
-    uint8_t System_Led_Status;      // 系统指示灯
-    uint8_t System_Sleep_Mode;      // 系统休眠
+    uint8_t System_Work_Status;     
+    uint8_t System_Work_Mode;       
+    uint8_t System_Work_Channel;    
+    uint8_t System_Connect_Status;  
+    uint8_t System_Led_Status;      
+    uint8_t System_Sleep_Mode;      
 } Keyboard_Status_t;
+
 extern Keyboard_Status_t Keyboard_Status;
 
 bool     Key_2p4g_Status;
@@ -263,11 +260,10 @@ bool     Key_Ble_2_Status;
 bool     Key_Ble_3_Status;
 bool     Key_Fn_Status;
 
-/************************键盘恢复初始化变量*******************/
+
 uint16_t Time_3s_EE_CLR_Count;
 bool User_QMK_EE_CLR_Flag;
 bool User_EE_CLR_Start_Flag;
-/*********************************************************/
 
 uint8_t  Systick_6ms_Count;
 uint8_t  Systick_10ms_Count;
@@ -275,9 +271,7 @@ uint16_t Systick_Interval_Count;
 uint16_t Time_3s_Count;
 uint16_t Func_Time_3s_Count;
 
-/************************数据队列**************************/
-/************************数据队列**************************/
-/************************数据队列**************************/
+
 #define APP_2G4_BUF_SIZE            (USER_KEYBOARD_LENGTH)
 #define APP_2G4_BUF_CNT             (20)
 
@@ -305,10 +299,10 @@ void Emi_Write_Data(uint8_t *User_Data, uint8_t User_Length);
 #define SPI_DELAY_USB_TIME          (500 * 3)
 
 #define MAX_NAME_LEN                (18)
-#define USER_BlE_ID                 (0X001E)
-#define USER_BlE1_NAME              "WOMIER Q61-1"
-#define USER_BlE2_NAME              "WOMIER Q61-2"
-#define USER_BlE3_NAME              "WOMIER Q61-3"
+#define USER_BlE_ID                 (0X002D)
+#define USER_BlE1_NAME              "CIDOO QK61-1"
+#define USER_BlE2_NAME              "CIDOO QK61-2"
+#define USER_BlE3_NAME              "CIDOO QK61-3"
 
 uint16_t Spi_Interval;
 volatile uint8_t Spi_Send_Recv_Flg;
@@ -347,6 +341,15 @@ void es_send_extra(report_extra_t *report);
 void Mode_Synchronization(void);
 void Ble_Name_Synchronization(void);
 void User_bluetooth_send_keyboard(uint8_t *report, uint32_t len);
+bool Key_Value_Dispose(uint16_t keycode, keyrecord_t *record);
+
+/************************拨动开关**************************/
+/************************拨动开关**************************/
+/************************拨动开关**************************/
+uint8_t Key_Switch_Scan;
+uint8_t Key_Switch_Check;
+uint8_t Key_Switch_Old;
+uint8_t Key_Switch_delay;
 
 /**************************系统函数****************************/
 /**************************系统函数****************************/
@@ -411,13 +414,13 @@ void eeprom_read_block_user(void *buf, const void *addr, size_t len);
 #define USER_BATT_POWER_SCAN_COUNT  (10)
 #define USER_BATT_SCAN_COUNT        (10)
 
-#define USER_BATT_HIGH_POWER        (2555)      //满电 2565 * 3.3 /4096 = 2.066 4.13V     实际电路存在压降。
-#define USER_BATT_LOW_POWER         (2140)      //低电 2065 * 3.3 /4096 = 1.663 3.32V     即使键盘不开灯，电池满电4.2V
-#define USER_BATT_STDOWN_POWER      (1865)      //关机 1865 * 3.3 /4096 = 1.502 3.04V     输入到板子也就只有4.1V左右
+#define USER_BATT_HIGH_POWER        (2555)     
+#define USER_BATT_LOW_POWER         (2080)     
+#define USER_BATT_STDOWN_POWER      (1865)     
 
-#define USER_BATT_DELAY_TIME        (100 * 25)  //25S
-#define USER_TIME_3S_TIME           (300)       //3S
-#define USER_TIME_2S_TIME           (200)       //2S
+#define USER_BATT_DELAY_TIME        (100 * 25) 
+#define USER_TIME_3S_TIME           (300)      
+#define USER_TIME_2S_TIME           (200)      
 
 /************************电池**************************/
 uint16_t User_Adc_Batt[USER_BATT_SCAN_COUNT];
@@ -440,6 +443,19 @@ uint8_t  User_Key_Batt_Count;
 uint8_t  Batt_Led_Count;
 /*********************************************************/
 
+/************************按键消抖**************************/
+#define DEBOUNCE_DELAY_ONE      (2)                             
+#define DEBOUNCE_DELAY_TWO      (5)                             
+#define DEBOUNCE_DELAY_CLASS    (DEBOUNCE_DELAY_TWO)            
+
+
+unsigned int Debounce_Delay;        //键盘消抖次数，最大为127
+uint8_t Debounce_Point_Count;
+uint16_t User_Key_3s_Count;
+bool Debounce_Function_Count;
+bool Debounce_Function_Status;
+/*********************************************************/
+
 const md_adc_initial adc_initStruct;
 
 void Init_Batt_Infomation(void);
@@ -449,9 +465,7 @@ void U16_Buff_Clear(uint16_t *Buff, uint8_t Len);
 void User_Adc_Batt_Power_Up_Init(void);
 void User_Adc_Batt_Number(void);
 
-/************************主控灯光**************************/
-/************************主控灯光**************************/
-/************************主控灯光**************************/
+
 #define ES_PWM_LED_SIZE         (42)
 #define ES_PWM_LED_BYTE         (24)
 #define ES_PWM_DMA_SIZE         (ES_PWM_LED_SIZE * ES_PWM_LED_BYTE)
@@ -461,19 +475,16 @@ void User_Adc_Batt_Number(void);
 
 #define U_PWM                   (RGB_MATRIX_MAXIMUM_BRIGHTNESS)
 
-#define LED_SCR_INDEX           (14)
-#define LED_NUM_INDEX           (0)
+#define LED_ESC_INDEX       (60)
+#define LED_BAT_INDEX       (52)
+#define LED_CAP_INDEX       (28)
+#define LED_WIN_L_INDEX     (54)
 
-#define LOW_POWER_INDEX         (59)
-#define LED_CHARGE_INDEX        (57)
-#define LED_CAP_INDEX           (28)
-#define LED_WIN_L_INDEX         (55)
-
-#define LED_BLE_1_INDEX         (15)
-#define LED_BLE_2_INDEX         (16)
-#define LED_BLE_3_INDEX         (17)
-#define LED_2P4G_INDEX          (18)
-#define LED_USB_INDEX           (19)
+#define LED_BLE_1_INDEX     (15)
+#define LED_BLE_2_INDEX     (16)
+#define LED_BLE_3_INDEX     (17)
+#define LED_2P4G_INDEX      (18)
+#define LED_USB_INDEX       (19)
 
 uint8_t Led_Colour_Tab[9][3];
 uint8_t Led_Wave_Pwm_Tab[128];
@@ -569,7 +580,7 @@ void User_Via_Qmk_Logo_Command(uint8_t *data, uint8_t length);
 //--------------------------------------------------------------------------------------------------------
 #if SIDE_LED_ENABLE
 #define SIDE_LED_PLAY_SPEED	        (0)                                                     // 灯光刷新速度
-#define SIDE_LED_SIZE	            (30)                                                    // 灯光数量
+#define SIDE_LED_SIZE	            (0)                                                     // 灯光数量
 
 #define SIDE_LED_ON                 (0)                                                     // 灯光打开
 #define SIDE_LED_OFF                (1)                                                     // 灯光关闭

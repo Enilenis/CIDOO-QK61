@@ -19,14 +19,8 @@
 #include "wait.h"
 #include "eeconfig.h"
 #include "bootloader.h"
-
-#ifndef BOOTMAGIC_DEBOUNCE
-#    if defined(DEBOUNCE) && DEBOUNCE > 0
-#        define BOOTMAGIC_DEBOUNCE (DEBOUNCE * 2)
-#    else
-#        define BOOTMAGIC_DEBOUNCE 30
-#    endif
-#endif
+#include "debounce.h"
+`
 
 /** \brief Reset eeprom
  *
@@ -61,8 +55,16 @@ __attribute__((weak)) bool bootmagic_should_reset(void) {
  *  100% less potential for accidentally making the keyboard do stupid things.
  */
 __attribute__((weak)) void bootmagic_scan(void) {
+    uint64_t BOOTMAGIC_DEBOUNCE = 0;
+
     // We need multiple scans because debouncing can't be turned off.
     matrix_scan();
+
+    if(Debounce_Delay > 0)
+        BOOTMAGIC_DEBOUNCE = Debounce_Delay * 2;
+    else
+        BOOTMAGIC_DEBOUNCE = 30;
+
     wait_ms(BOOTMAGIC_DEBOUNCE);
     matrix_scan();
 

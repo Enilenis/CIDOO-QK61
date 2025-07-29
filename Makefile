@@ -255,11 +255,6 @@ define LIST_ALL_KEYMAPS
     COMMANDS += LIST_KEYMAPS
 endef
 
-#SRC += $(LIB_PATH)/rdr_lib/rdr_common.c
-#LIB_NAME = rdrcommon
-#LIBRARY = $(LIB_PATH)/rdr_lib/lib$(LIB_NAME).a
-#LDFLAGS += -L$(LIB_PATH)/rdr_lib -l$(LIB_NAME)
-
 # $1 Keymap
 # This is the meat of compiling a keyboard, when entering this, everything is known
 # keyboard, subproject, and keymap
