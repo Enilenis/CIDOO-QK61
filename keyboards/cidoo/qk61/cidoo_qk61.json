@@ -144,7 +144,7 @@
     {"name": "SIX_N",    "title": "Full-key six-key switch",                 "shortName": "SIX_N"},
     {"name": "RTOG",     "title": "Toggle led lighting on or off",           "shortName": "RGB_RTOG"},
     {"name": "U_EE_CLR", "title": "Customize the reset button",              "shortName": "U_EE_CLR"},
-    {"name": "QK_DEB",   "title": "Number of times that the key shakes off", "shortName": "QK_DEB"  },
+    {"name": "KEY_DEB",   "title": "Number of times that the key shakes off", "shortName": "KEY_DEB"},
     {"name": "LG_TOG",   "title": "Toggle logo lighting on or off",          "shortName": "LG_TOG"},
     {"name": "LG_MO",    "title": "Cycle through modes",                     "shortName": "LG_MOD"},
     {"name": "LG_RM",    "title": "Cycle through modes in reverse",          "shortName": "LG_RMOD"},
