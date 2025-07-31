@@ -450,8 +450,16 @@ clean:
 .PHONY: distclean distclean_qmk
 distclean: distclean_qmk
 distclean_qmk: clean
-	echo -n 'Deleting *.bin, *.hex, and *.uf2 ... '
+	echo -n 'Deleting *.bin, *.hex, *.uf2 and __pycache__... '
 	rm -f *.bin *.hex *.uf2
+	find . -type d -name "__pycache__" -exec rm -rf {} +
+	echo 'done.'
+
+.PHONY: distclean_cidoo
+distclean_cidoo: clean distclean
+	echo -n 'Cleaning keyboards except qk61... '
+	find keyboards -mindepth 1 ! -name 'cidoo' ! -path 'keyboards/cidoo/*' -exec rm -rf {} +
+	find keyboards/cidoo -mindepth 1 ! -name 'qk61' ! -path 'keyboards/cidoo/qk61/*' -exec rm -rf {} +
 	echo 'done.'
 
 ifneq ($(QMK_USERSPACE),)
